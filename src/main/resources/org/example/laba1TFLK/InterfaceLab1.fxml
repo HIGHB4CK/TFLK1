@@ -8,15 +8,11 @@
 <VBox prefHeight="600.0" prefWidth="800.0"
       xmlns="http://javafx.com/javafx/23.0.1"
       xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.example.laba1_tfyk.HelloController">
+      fx:controller="org.example.laba1TFLK.HelloController">
 
     <children>
-
-        <!-- ====== ГЛАВНОЕ МЕНЮ ====== -->
         <MenuBar>
-
             <menus>
-
                 <Menu text="Файл">
                     <MenuItem text="Создать" onAction="#handleNew"/>
                     <MenuItem text="Открыть" onAction="#handleOpen"/>
@@ -62,7 +58,6 @@
             </menus>
         </MenuBar>
 
-        <!-- ====== ПАНЕЛЬ ИНСТРУМЕНТОВ ====== -->
         <ToolBar>
 
             <Button onAction="#handleNew">
@@ -151,16 +146,13 @@
 
         </ToolBar>
 
-        <!-- ====== ОБЛАСТИ РЕДАКТИРОВАНИЯ И РЕЗУЛЬТАТОВ ====== -->
         <SplitPane orientation="VERTICAL" VBox.vgrow="ALWAYS">
 
             <items>
 
-                <!-- Редактор -->
                 <TextArea fx:id="textArea"
                           wrapText="true"/>
 
-                <!-- Область результатов -->
                 <TextArea fx:id="textArea2"
                           editable="false"
                           wrapText="true"/>

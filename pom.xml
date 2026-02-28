@@ -20,10 +20,18 @@
             <artifactId>javafx-controls</artifactId>
             <version>17.0.6</version>
         </dependency>
+
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
             <version>17.0.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.panteleyev</groupId>
+            <artifactId>jpackage-maven-plugin</artifactId>
+            <version>1.6.6</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -50,10 +58,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
+                <version>3.11.0</version>
                 <configuration>
-                    <source>23</source>
-                    <target>23</target>
+                    <source>21</source>
+                    <target>21</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -65,7 +73,7 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>org.example.laba1_tfyk/org.example.laba1_tfyk.HelloApplication</mainClass>
+                            <mainClass>org.example.laba1TFLK/org.example.laba1TFLK.HelloApplication</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>
@@ -76,6 +84,49 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.6.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/dependencies</outputDirectory>
+                            <includeScope>runtime</includeScope>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.panteleyev</groupId>
+                <artifactId>jpackage-maven-plugin</artifactId>
+                <version>1.6.0</version> <configuration>
+                <name>MyJavaFXApp</name> <appVersion>1.0.0</appVersion>
+                <vendor>MyName</vendor>
+
+                <type>APP_IMAGE</type>
+
+                <destination>target/dist</destination>
+
+                <module>org.example.laba1TFLK/org.example.laba1TFLK.HelloApplication</module>
+                <modulePaths>
+                    <modulePath>target/classes</modulePath>
+                    <modulePath>target/dependencies</modulePath>
+                </modulePaths>
+
+                <winConsole>false</winConsole>
+            </configuration>
+            </plugin>
+
+
         </plugins>
     </build>
 </project>

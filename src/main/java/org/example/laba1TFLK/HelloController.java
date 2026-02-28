@@ -1,4 +1,4 @@
-package org.example.laba1_tfyk;
+package org.example.laba1TFLK;
 
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -9,7 +9,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;

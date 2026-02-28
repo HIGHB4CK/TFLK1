@@ -1,4 +1,4 @@
-package org.example.laba1_tfyk;
+package org.example.laba1TFLK;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
