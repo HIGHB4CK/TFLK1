@@ -1,11 +1,16 @@
-package org.example.laba1TFLK;
+package org.example.Lab2;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -16,6 +21,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.Optional;
 
 public class HelloController {
@@ -26,6 +32,36 @@ public class HelloController {
     @FXML
     private TextArea textArea2;
 
+    @FXML
+    private TableView<Token> resultTable;
+
+    @FXML
+    private TableColumn<Token, Integer> codeCol;
+
+    @FXML
+    private TableColumn<Token, String> typeCol;
+
+    @FXML
+    private TableColumn<Token, String> lexemeCol;
+
+    @FXML
+    private TableColumn<Token, String> locationCol;
+
+    @FXML
+    private TableView<SyntaxError> syntaxErrorTable;
+
+    @FXML
+    private TableColumn<SyntaxError, String> errorFragmentCol;
+
+    @FXML
+    private TableColumn<SyntaxError, String> errorLocationCol;
+
+    @FXML
+    private TableColumn<SyntaxError, String> errorDescCol;
+
+    private ObservableList<Token> tokenData = FXCollections.observableArrayList();
+    private ObservableList<SyntaxError> syntaxErrorData = FXCollections.observableArrayList();
+
     private File currentFile;
     private double fontSize = 14;
     private boolean isModified = false;
@@ -34,6 +70,31 @@ public class HelloController {
     public void initialize() {
 
         textArea2.setEditable(false);
+        codeCol.setCellValueFactory(new PropertyValueFactory<>("code"));
+        typeCol.setCellValueFactory(new PropertyValueFactory<>("type"));
+        lexemeCol.setCellValueFactory(new PropertyValueFactory<>("text"));
+        locationCol.setCellValueFactory(new PropertyValueFactory<>("location"));
+        
+        resultTable.setItems(tokenData);
+
+        resultTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
+            if (newSel != null && newSel.getCode() == 17) {
+                textArea.requestFocus();
+                textArea.selectRange(newSel.getGlobalStart(), newSel.getGlobalEnd());
+            }
+        });
+        errorFragmentCol.setCellValueFactory(new PropertyValueFactory<>("fragment"));
+        errorLocationCol.setCellValueFactory(new PropertyValueFactory<>("location"));
+        errorDescCol.setCellValueFactory(new PropertyValueFactory<>("description"));
+        
+        syntaxErrorTable.setItems(syntaxErrorData);
+
+        syntaxErrorTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
+            if (newSel != null) {
+                textArea.requestFocus();
+                textArea.selectRange(newSel.getGlobalStart(), newSel.getGlobalEnd());
+            }
+        });
 
         textArea.textProperty().addListener((obs, oldText, newText) -> {
             isModified = true;
@@ -47,7 +108,7 @@ public class HelloController {
 
                 stage.setOnCloseRequest(event -> {
                     if (!checkSaveBeforeAction()) {
-                        event.consume(); // отменяет закрытие
+                        event.consume();
                     }
                 });
 
@@ -283,7 +344,34 @@ public class HelloController {
     }
 
     @FXML
-    public void handleRun() { showInfo("Запуск программы."); }
+    public void handleRun() { 
+        String text = textArea.getText();
+        if (text == null || text.isEmpty()) {
+            textArea2.setText("Текст для анализа отсутствует.");
+            tokenData.clear();
+            syntaxErrorData.clear();
+            return;
+        }
+
+        List<Token> tokens = Scanner.analyze(text);
+        tokenData.clear();
+        tokenData.addAll(tokens);
+
+        long errorCount = tokens.stream().filter(t -> t.getCode() == 17).count();
+
+        List<SyntaxError> syntaxErrors = Parser.parse(tokens);
+        syntaxErrorData.clear();
+        syntaxErrorData.addAll(syntaxErrors);
+
+        int syntaxErrorCount = syntaxErrors.size();
+
+        if (errorCount > 0 || syntaxErrorCount > 0) {
+            textArea2.setText("Анализ завершен. Лексических ошибок: " + errorCount + ", синтаксических ошибок: " + syntaxErrorCount + ".");
+            showInfo("Анализ завершен с ошибками. Проверьте сообщения и таблицы.");
+        } else {
+            textArea2.setText("Анализ успешно завершен. Ошибок не обнаружено.");
+        }
+    }
 
     @FXML
     private void handleCallingHelp() {
